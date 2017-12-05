@@ -1,0 +1,137 @@
+#!/usr/bin/env bash
+
+diagram () {
+    mkdir -p "$(dirname "$1")"
+    svgbob > "$1"
+}
+
+diagram assets/circular-list-in-a-few-lines-of-code/0.svg <<EOF
+  .--.  ---->  .--.  ---->  .--.  ---->  .--.   
+ ( G  )       ( F  )       (    )       (    )
+  '--'  <~~~~  '--'  <~~~~  '--'  <~~~~  '--'
+ 
+  ^  !                                   ^  |
+  |  !                                   !  |
+  |  !                                   !  |
+  |  v                                   !  v
+ 
+  .--.  ~~~~>  .--.  ~~~~>  .--.  ~~~~>  .--.   
+ ( L  )       (    )       (    )       (    )
+  '--'  <----  '--'  <----  '--'  <----  '--'
+ 
+ ~~~~> prev
+ ----> next
+     G guard
+     F first element
+     L last element
+EOF
+
+diagram assets/circular-list-in-a-few-lines-of-code/1.svg <<EOF
+   .~~~~>  .--.  -----.
+  (       (    )       )
+   '~~~~~  '--'  <----'
+ 
+ ~~~~> prev
+ ----> next
+EOF
+
+diagram assets/circular-list-in-a-few-lines-of-code/2.svg <<EOF
+  .--.         .--. 
+ (    )       (    )
+  '--'         '--' 
+ 
+ ~~~~> prev
+ ----> next
+EOF
+
+diagram assets/circular-list-in-a-few-lines-of-code/3.svg <<EOF
+ Before:
+             .--. -----> ...    
+            ( a  )            .--. -----> ... 
+ ... <~~~~~  '--'            ( b  )
+                  ... <~~~~~  '--' 
+ 
+ After:
+             .--. ----->  .--. -----> ...    
+            ( a  )       ( b  )      
+ ... <~~~~~  '--' <~~~~~  '--'  
+ 
+ ~~~~> prev
+ ----> next
+   ... somewhere
+EOF
+
+diagram assets/circular-list-in-a-few-lines-of-code/4.svg <<EOF
+  .--.  ---->  .--.  ---->  .--.  ---->  .--.   
+ (    )       ( a  )       ( c  )       (    )
+  '--'  <~~~~  '--'  <~~~~  '--'  <~~~~  '--'
+ 
+  ^  !                                   ^  |
+  |  !                                   !  |
+  |  !                                   !  |
+  |  v                                   !  v
+ 
+  .--.  ~~~~>  .--.  ~~~~>  .--.  ~~~~>  .--.   
+ (    )       ( b  )       ( d  )       (    )
+  '--'  <----  '--'  <----  '--'  <----  '--'
+ 
+ ~~~~> prev
+ ----> next
+EOF
+
+diagram assets/circular-list-in-a-few-lines-of-code/5.svg <<EOF
+  .--.  ---->  .--.         .--.  ---->  .--.   
+ (    )       ( a  )       ( c  )       (    )
+  '--'  <~~~~  '--'         '--'  <~~~~  '--'
+ 
+  ^  !         ^  |         ^  !         ^  |
+  |  !         !  |         |  !         !  |
+  |  !         !  |         |  !         !  |
+  |  v         !  v         |  v         !  v
+ 
+  .--.  ~~~~>  .--.         .--.  ~~~~>  .--.   
+ (    )       ( b  )       ( d  )       (    )
+  '--'  <----  '--'         '--'  <----  '--'
+ 
+ ~~~~> prev
+ ----> next
+EOF
+
+diagram assets/circular-list-in-a-few-lines-of-code/6.svg <<EOF
+ Before:
+             .--.  -----> ...
+            ( a  )      
+ ... <~~~~~  '--'  
+ 
+ After
+ 
+     .~~~~>  .--.  -----.
+    (       ( a  )       )
+     '~~~~~  '--'  <----'
+ 
+ ~~~~> prev
+ ----> next
+   ... somewhere
+EOF
+
+diagram assets/circular-list-in-a-few-lines-of-code/7.svg <<EOF
+     .~~~~>  .--.  -----.
+    (       ( a  )       )
+     '~~~~~  '--'  <----'
+ 
+  .--.  ----------------->  .--.  ---->  .--.   
+ (    )                    ( c  )       (    )
+  '--'  <~~~~~~~~~~~~~~~~~  '--'  <~~~~  '--'
+ 
+  ^  !                                   ^  |
+  |  !                                   !  |
+  |  !                                   !  |
+  |  v                                   !  v
+ 
+  .--.  ~~~~>  .--.  ~~~~>  .--.  ~~~~>  .--.   
+ (    )       ( b  )       ( d  )       (    )
+  '--'  <----  '--'  <----  '--'  <----  '--'
+ 
+ ~~~~> prev
+ ----> next
+EOF

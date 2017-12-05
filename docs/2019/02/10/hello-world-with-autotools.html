@@ -1,0 +1,157 @@
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#0276f6">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <title>Hello world with Autotools | P. Czarnota</title>
+
+        <meta name="generator" content="blog.sh" />
+        <meta property="og:title" content="Hello world with Autotools" />
+        <meta property="og:locale" content="en_US" />
+
+        <meta name="description" content="A public domain blog about Bash" />
+        <meta property="og:description" content="A public domain blog about Bash" />
+
+        <link rel="canonical" href="https://czarnota.github.io/2019/02/10/hello-world-with-autotools.html" />
+        <meta property="og:url" content="https://czarnota.github.io/2019/02/10/hello-world-with-autotools.html" />
+
+        <meta property="og:site_name" content="P. Czarnota" />
+        <link rel="next" href="http://czarnota.github.io/page/2/index.html" />
+        <script type="application/ld+json">
+        {"@type":"WebSite","url":"http://czarnota.github.io/","headline":"P. Czarnota","description":"Programmer's blog by P. Czarnota","name":"P. Czarnota","@context":"http://schema.org"}</script>
+          <link rel="stylesheet" href="/assets/main.css">
+         <link rel="icon" type="image/png" href="/assets/favicon.ico">
+      </head>
+      <body>
+        <div class="content">
+            <main aria-label="Content">
+                    <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+            <div class="post post-full">
+          <div class="wrapper post-img-wrapper">
+          <div class="post-header-wrapper">
+            <header class="post-header">
+
+            <h1 class="post-h">
+
+            <a class="post-link" href="/2019/02/10/hello-world-with-autotools.html">Hello world with Autotools</a>
+
+            </h1>
+
+            <div class="post-meta">
+                <span>2019/02/10</span>
+                <span class="post-tags">
+                <a class=post-tag href=#>c</a>
+                </span>
+            </div>
+
+            </header>
+          </div>
+        </div>
+
+
+        <div class="wrapper">
+
+        <div class="post-content"><p><em><a href="https://en.wikipedia.org/wiki/GNU_Build_System">The
+Autotools</a></em> are de facto standard for building C/C++ code in the
+Linux world. It is a very flexible build system, but because of its
+flexibility it has a quite steep learning curve. Here is the bare
+minimum example that will get you started.</p>
+<h2 id="the-bare-minimum">The bare minimum</h2>
+<p>To build a simple hello world program with <a
+href="https://en.wikipedia.org/wiki/GNU_Build_System">Autotools</a> you
+just need 3 files. Here is the file structure:</p>
+<pre><code>bare-minimum-example
+├── Makefile.am
+├── configure.ac
+└── main.c</code></pre>
+<p>The <code>configure</code> will be created from
+<code>configure.ac</code>.</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#configure.ac</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>AC_INIT([hello<span class="op">-</span>world], <span class="fl">1.0</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>AM_INIT_AUTOMAKE([foreign])</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>AC_PROG_CC</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>AC_CONFIG_FILES([Makefile])</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>AC_OUTPUT</span></code></pre></div>
+<p>And a <code>Makefile.am</code> to generate a <code>Makefile.in</code>
+from which the final <code>Makefile</code> will be created.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode py"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Makefile.am</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>bin_PROGRAMS <span class="op">=</span> hello</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>hello_SOURCES <span class="op">=</span> hello.c</span></code></pre></div>
+<p>Contents of <code>hello.c</code>:</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode cpp"><code class="sourceCode cpp"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co">//hello.c</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">#include </span><span class="im">&lt;stdio.h&gt;</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="dt">int</span> main<span class="op">(</span><span class="dt">int</span> argc<span class="op">,</span> <span class="dt">char</span> <span class="op">**</span>argv<span class="op">)</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    printf<span class="op">(</span><span class="st">&quot;Hello world!</span><span class="sc">\n</span><span class="st">&quot;</span><span class="op">);</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="dv">0</span><span class="op">;</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="building">Building</h2>
+<p>First you need to transform your <code>configure.ac</code> into a
+<code>configure</code> script. This is done by the
+<code>autoconf</code>. The <code>configure</code> script uses a
+<code>Makefile.in</code> to produce the final <code>Makefile</code>. The
+<code>Makefile.in</code> is usually generated by the
+<code>automake</code> from a <code>Makefile.am</code>. Are you still
+with me?</p>
+<pre><code>configure.ac -&gt; |autoconf| -&gt;  configure  -&gt; |           |
+                                             |./configure| -&gt; Makefile
+ Makefile.am -&gt; |automake| -&gt; Makefile.in -&gt; |           |</code></pre>
+<p>You can use <code>autoreconf</code> to run <code>autoconf</code> and
+<code>automake</code> for you.</p>
+<pre class="console"><code>$ autoreconf -vfi</code></pre>
+<p>Then you can run the produced <code>./configure</code> script and
+build you application.</p>
+<pre class="console"><code>$ ./configure
+$ make
+$ ./hello
+Hello world!</code></pre>
+<p>And that’s pretty much it.</p>
+<h2 id="next-steps">Next steps</h2>
+<p>This example is everything you need to know in order to build a
+simple program with <a
+href="https://en.wikipedia.org/wiki/GNU_Build_System">Autotools</a> . If
+your scenario is more complex, then with the help of the official <a
+href="https://www.gnu.org/software/automake/manual/html_node/Autotools-Introduction.html">documentation</a>
+you will be able extend it.</p></div>
+
+        <div class="navigation">
+            <div>
+                <div class="prev-post">
+                <div>Next post</div>
+<a href=/2020/03/21/subcommands-in-bash-scripts.html>Subcommands in Bash scripts</a>
+                </div>
+                <div class="next-post">
+                &nbsp;
+                </div>
+                <div class="cf"></div>
+            </div>
+
+            <div class="all-posts-link">
+                <a href="/">[see all posts]</a>
+            </div>
+        </div>
+        </div>
+    </div>
+        <a class="u-url" href="//2019/02/10/hello-world-with-autotools.html" hidden></a>
+    </article>
+            </main>
+
+            <footer>
+                <div class="copyright">
+                    <a href="/uncopyright/" class="about-link">uncopyright</a>
+                </div>
+            </footer>
+        </div>
+
+      </body>
+
+    </html>

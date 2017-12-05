@@ -1,0 +1,235 @@
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#0276f6">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <title>Subcommands in Bash scripts | P. Czarnota</title>
+
+        <meta name="generator" content="blog.sh" />
+        <meta property="og:title" content="Subcommands in Bash scripts" />
+        <meta property="og:locale" content="en_US" />
+
+        <meta name="description" content="A public domain blog about Bash" />
+        <meta property="og:description" content="A public domain blog about Bash" />
+
+        <link rel="canonical" href="https://czarnota.github.io/2020/03/21/subcommands-in-bash-scripts.html" />
+        <meta property="og:url" content="https://czarnota.github.io/2020/03/21/subcommands-in-bash-scripts.html" />
+
+        <meta property="og:site_name" content="P. Czarnota" />
+        <link rel="next" href="http://czarnota.github.io/page/2/index.html" />
+        <script type="application/ld+json">
+        {"@type":"WebSite","url":"http://czarnota.github.io/","headline":"P. Czarnota","description":"Programmer's blog by P. Czarnota","name":"P. Czarnota","@context":"http://schema.org"}</script>
+          <link rel="stylesheet" href="/assets/main.css">
+         <link rel="icon" type="image/png" href="/assets/favicon.ico">
+      </head>
+      <body>
+        <div class="content">
+            <main aria-label="Content">
+                    <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+            <div class="post post-full">
+          <div class="wrapper post-img-wrapper">
+          <div class="post-header-wrapper">
+            <header class="post-header">
+
+            <h1 class="post-h">
+
+            <a class="post-link" href="/2020/03/21/subcommands-in-bash-scripts.html">Subcommands in Bash scripts</a>
+
+            </h1>
+
+            <div class="post-meta">
+                <span>2020/03/26</span>
+                <span class="post-tags">
+                <a class=post-tag href=#>bash</a>
+                </span>
+            </div>
+
+            </header>
+          </div>
+        </div>
+
+
+        <div class="wrapper">
+
+        <div class="post-content"><p>When your bash scripts start doing many things, then it may be a good
+idea to split them. Alternatively, you can implement subcommands to have
+multiple entry points into the script.</p>
+<p>Usually this can be done very easily by few <code>if</code>s. Take a
+look at this example:</p>
+<div class="sourceCode" id="cb1"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="va">subcommand</span><span class="op">=</span><span class="st">&quot;</span><span class="va">$1</span><span class="st">&quot;</span><span class="kw">;</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="bu">shift</span><span class="kw">;</span></span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="va">$subcommand</span> <span class="ot">==</span> foo <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> subcommand foo <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> <span class="kw">[[</span> <span class="va">$subcommand</span> <span class="ot">==</span> bar <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> subcommand bar <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a><span class="cf">elif</span> <span class="kw">[[</span> <span class="va">$subcommand</span> <span class="ot">==</span> baz <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> subcommand baz <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div>
+<p>This is very straightforward and is working pretty good:</p>
+<pre class="console"><code>$ ./script foo 1 2 3
+subcommand foo 1 2 3
+$ ./script bar 1 2 3
+subcommand bar 1 2 3
+$ ./script baz 1 2 3
+subcommand baz 1 2 3</code></pre>
+<p>But it has one problem. This implementation of subcommands is
+basically a procedural logic. Even the simpliest kind of procedural
+logic can be often harder to understand than a fairly complex data
+structure. There is even a popular quote by Fred Brooks</p>
+<blockquote>
+<p>Show me your code and conceal your data structures, and I shall
+continue to be mystified. Show me your data structures, and I won’t
+usually need your code; it’ll be obvious. – <cite>Fred Brooks</cite></p>
+</blockquote>
+<p>And there is also the Rule of Representation, one of the rules of the
+Unix Philosophy</p>
+<blockquote>
+<p>Rule of Representation: Fold knowledge into data so program logic can
+be stupid and robust.</p>
+</blockquote>
+<p>So how do we implement subcommands in a declarative way?</p>
+<h2 id="declarative-subcommands">Declarative subcommands</h2>
+<p>Let’s jump straight into the working example.</p>
+<div class="sourceCode" id="cb3"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/usr/bin/env bash</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="fu">usage ()</span> <span class="kw">{</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> unknown command: <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> Usage: script foo<span class="kw">|</span><span class="ex">bar</span><span class="kw">|</span><span class="ex">baz</span> ARGUMENTS</span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="fu">foo ()</span> <span class="kw">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="bu">shift</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> subcommand foo <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">bar ()</span> <span class="kw">{</span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>    <span class="bu">shift</span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> subcommand bar <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a><span class="fu">baz ()</span> <span class="kw">{</span></span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>    <span class="bu">shift</span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> subcommand baz <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a><span class="co"># Associative array where we specify available entry points</span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a><span class="bu">declare</span> <span class="at">-A</span> <span class="va">COMMANDS</span><span class="op">=</span><span class="va">(</span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>main<span class="op">]</span><span class="va">=</span>usage</span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>foo<span class="op">]</span><span class="va">=</span>foo</span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>bar<span class="op">]</span><span class="va">=</span>bar</span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>    <span class="op">[</span>baz<span class="op">]</span><span class="va">=</span>baz</span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a><span class="va">)</span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a><span class="co"># Magic line that makes it all working</span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span><span class="va">${COMMANDS</span><span class="op">[</span><span class="va">${1</span><span class="op">:-</span>main<span class="va">}</span><span class="op">]:-</span><span class="va">${COMMANDS</span><span class="op">[</span>main<span class="op">]</span><span class="va">}}</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span></code></pre></div>
+<p>Let us decode the magic line</p>
+<div class="sourceCode" id="cb4"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span><span class="va">${COMMANDS</span><span class="op">[</span><span class="va">${1</span><span class="op">:-</span>main<span class="va">}</span><span class="op">]:-</span><span class="va">${COMMANDS</span><span class="op">[</span>main<span class="op">]</span><span class="va">}}</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span></code></pre></div>
+<p>Let’s start with <code>${1:-main}</code>. This will return first
+argument passed to a script and if there is no argument it will return
+<code>main</code>. So if the script is invoked like this:</p>
+<pre class="console"><code>$ ./scripts foo</code></pre>
+<p>We get:</p>
+<div class="sourceCode" id="cb6"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span><span class="va">${COMMANDS</span><span class="op">[</span>foo<span class="op">]:-</span><span class="va">${COMMANDS</span><span class="op">[</span>main<span class="op">]</span><span class="va">}}</span><span class="st">&quot;</span> foo</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="co">#           ^^^--------- $1 here      ^^^----- expanded &quot;$@&quot;</span></span></code></pre></div>
+<p>And if no argument is provided</p>
+<pre class="console"><code>$ ./scripts</code></pre>
+<p>It will become</p>
+<div class="sourceCode" id="cb8"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span><span class="va">${COMMANDS</span><span class="op">[</span>main<span class="op">]:-</span><span class="va">${COMMANDS</span><span class="op">[</span>main<span class="op">]</span><span class="va">}}</span><span class="st">&quot;</span> </span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="co">#           ^^^^--------- $1 here      ^--- expanded &quot;$@&quot;</span></span></code></pre></div>
+<p>Let’s go further. What if someone invokes the script with a
+subcommand that does not exist?</p>
+<pre class="console"><code>$ ./scripts one two three</code></pre>
+<p>Then we will get</p>
+<div class="sourceCode" id="cb10"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span><span class="va">${COMMANDS</span><span class="op">[</span>one<span class="op">]:-</span><span class="va">${COMMANDS</span><span class="op">[</span>main<span class="op">]</span><span class="va">}}</span><span class="st">&quot;</span> one two three</span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co">#           ^^^--------- $1 here      ^^^^^^^^^^^^^---- expanded &quot;$@&quot;</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="co">#  ^^^^^^^^^^^^^-------- this does not exist</span></span></code></pre></div>
+<p>The <code>"${COMMANDS[one]}</code> does not exist, so we will fall
+back to <code>:-${COMMANDS[main]}</code>, and we will finally get
+this:</p>
+<div class="sourceCode" id="cb11"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="ex">usage</span> one two three</span></code></pre></div>
+<p>So if someone calls the script with the wrong command, it means that
+he is really calling the <code>main</code> entry point. In our above
+case the <code>main</code> entry point is set to a function called
+<code>usage()</code> so in this case we are going to simply see the help
+message.</p>
+<h2 id="arguments">Arguments</h2>
+<p>The last nuance is handling the actual arguments passed to
+subcommands.</p>
+<p>Let’s start with the <code>main</code> entry point. This is
+straightforward. The <code>main</code> entry point is called either with
+no arguments or all arguments passed to the script</p>
+<div class="sourceCode" id="cb12"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="fu">usage ()</span> <span class="kw">{</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> unknown command: <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> Usage: script foo<span class="kw">|</span><span class="ex">bar</span><span class="kw">|</span><span class="ex">baz</span> ARGUMENTS</span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<pre class="console"><code>$ ./script one two three
+unknown command: one two three
+echo Usage: script foo|bar|baz ARGUMENTS</code></pre>
+<p>But in the case of actual subcommands, they will also get all
+arguments, because if we are calling a script with subcommand like
+this:</p>
+<pre class="console"><code>$ ./script foo bar</code></pre>
+<p>We actually do this:</p>
+<div class="sourceCode" id="cb15"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="st">&quot;</span><span class="va">${COMMANDS</span><span class="op">[</span><span class="va">${1</span><span class="op">:-</span>main<span class="va">}</span><span class="op">]:-</span><span class="va">${COMMANDS</span><span class="op">[</span>main<span class="op">]</span><span class="va">}}</span><span class="st">&quot;</span> <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># and it will expand to</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a><span class="ex">foo</span> foo bar</span></code></pre></div>
+<p>So our subcommand receives 2 arguments: <code>foo</code> and
+<code>bar</code>, but it should receive only <code>bar</code>. This is
+why we use the <code>shift</code> at the beginning of every
+subcommand</p>
+<div class="sourceCode" id="cb16"><pre
+class="sourceCode bash"><code class="sourceCode bash"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">foo ()</span> <span class="kw">{</span></span>
+<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    <span class="bu">shift</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">echo</span> subcommand foo <span class="st">&quot;</span><span class="va">$@</span><span class="st">&quot;</span></span>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a><span class="kw">}</span></span></code></pre></div>
+<p>I hope it was not too scary.</p></div>
+
+        <div class="navigation">
+            <div>
+                <div class="prev-post">
+                <div>Next post</div>
+<a href=/2020/10/25/circular-list-in-a-few-lines-of-code.html>Circular doubly linked list in just a few lines of code</a>
+                </div>
+                <div class="next-post">
+                <div>Previous post</div>
+<a href=/2019/02/10/hello-world-with-autotools.html>Hello world with Autotools</a>
+                </div>
+                <div class="cf"></div>
+            </div>
+
+            <div class="all-posts-link">
+                <a href="/">[see all posts]</a>
+            </div>
+        </div>
+        </div>
+    </div>
+        <a class="u-url" href="//2020/03/21/subcommands-in-bash-scripts.html" hidden></a>
+    </article>
+            </main>
+
+            <footer>
+                <div class="copyright">
+                    <a href="/uncopyright/" class="about-link">uncopyright</a>
+                </div>
+            </footer>
+        </div>
+
+      </body>
+
+    </html>

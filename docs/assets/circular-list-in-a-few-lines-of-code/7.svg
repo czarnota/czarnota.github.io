@@ -1,0 +1,147 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="376" height="320">
+    <style>line, path, circle,rect,polygon {
+                          stroke: black;
+                          stroke-width: 2;
+                          stroke-opacity: 1;
+                          fill-opacity: 1;
+                          stroke-linecap: round;
+                          stroke-linejoin: miter;
+                        }
+
+                    text {
+                        fill: black;
+                        }
+                        rect.backdrop{
+                            stroke: none;
+                            fill: white;
+                        }
+                        .broken{
+                            stroke-dasharray: 8;
+                        }
+                        .filled{
+                            fill: black;
+                        }
+                        .bg_filled{
+                            fill: white;
+                        }
+                        .nofill{
+                            fill: white;
+                        }
+
+                        text {
+                         font-family: monospace;
+                         font-size: 14px;
+                        }
+
+                        .end_marked_arrow{
+                            marker-end: url(#arrow);
+                         }
+                        .start_marked_arrow{
+                            marker-start: url(#arrow);
+                         }
+
+                        .end_marked_diamond{
+                            marker-end: url(#diamond);
+                         }
+                        .start_marked_diamond{
+                            marker-start: url(#diamond);
+                         }
+
+                        .end_marked_circle{
+                            marker-end: url(#circle);
+                         }
+                        .start_marked_circle{
+                            marker-start: url(#circle);
+                         }
+
+                        .end_marked_open_circle{
+                            marker-end: url(#open_circle);
+                         }
+                        .start_marked_open_circle{
+                            marker-start: url(#open_circle);
+                         }
+
+                        .end_marked_big_open_circle{
+                            marker-end: url(#big_open_circle);
+                         }
+                        .start_marked_big_open_circle{
+                            marker-start: url(#big_open_circle);
+                         }
+
+                         
+                        </style>
+    <defs>
+        <marker id="arrow" viewBox="-2 -2 8 8" refX="4" refY="2" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <polygon points="0,0 0,4 4,2 0,0"></polygon>
+        </marker>
+        <marker id="diamond" viewBox="-2 -2 8 8" refX="4" refY="2" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <polygon points="0,2 2,0 4,2 2,4 0,2"></polygon>
+        </marker>
+        <marker id="circle" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <circle cx="4" cy="4" r="2" class="filled"></circle>
+        </marker>
+        <marker id="open_circle" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <circle cx="4" cy="4" r="2" class="bg_filled"></circle>
+        </marker>
+        <marker id="big_open_circle" viewBox="0 0 8 8" refX="4" refY="4" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+            <circle cx="4" cy="4" r="3" class="bg_filled"></circle>
+        </marker>
+    </defs>
+    <rect class="backdrop" x="0" y="0" width="376" height="320"></rect>
+    <circle cx="120" cy="24" r="20" class="nofill"></circle>
+    <text x="114" y="28" >a</text>
+    <circle cx="32" cy="88" r="20" class="nofill"></circle>
+    <circle cx="240" cy="88" r="20" class="nofill"></circle>
+    <text x="234" y="92" >c</text>
+    <circle cx="344" cy="88" r="20" class="nofill"></circle>
+    <circle cx="32" cy="232" r="20" class="nofill"></circle>
+    <circle cx="136" cy="232" r="20" class="nofill"></circle>
+    <text x="130" y="236" >b</text>
+    <circle cx="240" cy="232" r="20" class="nofill"></circle>
+    <text x="234" y="236" >d</text>
+    <circle cx="344" cy="232" r="20" class="nofill"></circle>
+    <line x1="48" y1="8" x2="88" y2="8" class="broken end_marked_arrow"></line>
+    <polygon points="160,36 152,40 160,44" class="filled"></polygon>
+    <line x1="64" y1="72" x2="208" y2="72" class="solid end_marked_arrow"></line>
+    <line x1="272" y1="72" x2="312" y2="72" class="solid end_marked_arrow"></line>
+    <polygon points="72,100 64,104 72,108" class="filled"></polygon>
+    <line x1="72" y1="104" x2="208" y2="104" class="broken"></line>
+    <polygon points="280,100 272,104 280,108" class="filled"></polygon>
+    <line x1="280" y1="104" x2="312" y2="104" class="broken"></line>
+    <polygon points="16,140 20,128 24,140" class="filled"></polygon>
+    <line x1="20" y1="144" x2="20" y2="192" class="solid"></line>
+    <line x1="44" y1="128" x2="44" y2="192" class="broken end_marked_arrow"></line>
+    <polygon points="328,140 332,128 336,140" class="filled"></polygon>
+    <line x1="332" y1="144" x2="332" y2="192" class="broken"></line>
+    <line x1="356" y1="128" x2="356" y2="192" class="solid end_marked_arrow"></line>
+    <line x1="64" y1="216" x2="104" y2="216" class="broken end_marked_arrow"></line>
+    <line x1="168" y1="216" x2="208" y2="216" class="broken end_marked_arrow"></line>
+    <line x1="272" y1="216" x2="312" y2="216" class="broken end_marked_arrow"></line>
+    <polygon points="72,244 64,248 72,252" class="filled"></polygon>
+    <line x1="72" y1="248" x2="104" y2="248" class="solid"></line>
+    <polygon points="176,244 168,248 176,252" class="filled"></polygon>
+    <line x1="176" y1="248" x2="208" y2="248" class="solid"></line>
+    <polygon points="280,244 272,248 280,252" class="filled"></polygon>
+    <line x1="280" y1="248" x2="312" y2="248" class="solid"></line>
+    <line x1="8" y1="280" x2="48" y2="280" class="broken end_marked_arrow"></line>
+    <line x1="8" y1="296" x2="48" y2="296" class="solid end_marked_arrow"></line>
+    <text x="58" y="284" >prev</text>
+    <text x="58" y="300" >next</text>
+    <g>
+        <path d="M 48,8 A 8,8 0,0,0 42,12" class="nofill"></path>
+        <line x1="42" y1="12" x2="40" y2="16" class="solid"></line>
+        <path d="M 40,16 A 16,16 0,0,0 40,32" class="nofill"></path>
+        <line x1="40" y1="32" x2="42" y2="36" class="solid"></line>
+        <path d="M 42,36 A 8,8 0,0,0 48,40" class="nofill"></path>
+        <line x1="48" y1="40" x2="88" y2="40" class="broken"></line>
+    </g>
+    <g>
+        <line x1="152" y1="8" x2="192" y2="8" class="solid"></line>
+        <path d="M 192,8 A 8,8 0,0,1 198,12" class="nofill"></path>
+        <line x1="198" y1="12" x2="200" y2="16" class="solid"></line>
+        <path d="M 200,16 A 16,16 0,0,1 200,32" class="nofill"></path>
+        <line x1="200" y1="32" x2="198" y2="36" class="solid"></line>
+        <line x1="160" y1="40" x2="192" y2="40" class="solid"></line>
+        <path d="M 198,36 A 8,8 0,0,1 192,40" class="nofill"></path>
+    </g>
+</svg>

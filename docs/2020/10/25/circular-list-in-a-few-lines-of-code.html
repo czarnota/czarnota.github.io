@@ -1,0 +1,264 @@
+    <!DOCTYPE html>
+    <html lang="en">
+
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="theme-color" content="#0276f6">
+        <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+
+        <title>Circular doubly linked list in just a few lines of code | P. Czarnota</title>
+
+        <meta name="generator" content="blog.sh" />
+        <meta property="og:title" content="Circular doubly linked list in just a few lines of code" />
+        <meta property="og:locale" content="en_US" />
+
+        <meta name="description" content="A public domain blog about Bash" />
+        <meta property="og:description" content="A public domain blog about Bash" />
+
+        <link rel="canonical" href="https://czarnota.github.io/2020/10/25/circular-list-in-a-few-lines-of-code.html" />
+        <meta property="og:url" content="https://czarnota.github.io/2020/10/25/circular-list-in-a-few-lines-of-code.html" />
+
+        <meta property="og:site_name" content="P. Czarnota" />
+        <link rel="next" href="http://czarnota.github.io/page/2/index.html" />
+        <script type="application/ld+json">
+        {"@type":"WebSite","url":"http://czarnota.github.io/","headline":"P. Czarnota","description":"Programmer's blog by P. Czarnota","name":"P. Czarnota","@context":"http://schema.org"}</script>
+          <link rel="stylesheet" href="/assets/main.css">
+         <link rel="icon" type="image/png" href="/assets/favicon.ico">
+      </head>
+      <body>
+        <div class="content">
+            <main aria-label="Content">
+                    <article class="post h-entry" itemscope itemtype="http://schema.org/BlogPosting">
+            <div class="post post-full">
+          <div class="wrapper post-img-wrapper">
+          <div class="post-header-wrapper">
+            <header class="post-header">
+
+            <h1 class="post-h">
+
+            <a class="post-link" href="/2020/10/25/circular-list-in-a-few-lines-of-code.html">Circular doubly linked list in just a few lines of code</a>
+
+            </h1>
+
+            <div class="post-meta">
+                <span>2020/10/25</span>
+                <span class="post-tags">
+                <a class=post-tag href=#>c</a>
+                </span>
+            </div>
+
+            </header>
+          </div>
+        </div>
+
+
+        <div class="wrapper">
+
+        <div class="post-content"><p>Single linked lists are simple, doubly linked lists are harder, but
+circular linked lists are definitely the most elegant types of lists and
+it turns out that they are not actually that hard to implement.</p>
+<p>What is the difference between a circular linked list and doubly
+linked list? Well, in the circular list there are no <code>NULL</code>
+pointers indicating the beginning or the end of the list. Instead, we
+indicate the start and the end a of the list using the guard element
+(<code>G</code>).</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/0.svg" /></p>
+<p>This element usually has no payload associated with it and acts only
+as a indicator for the beginning and the end of the list. If a list has
+only one element then that element points to itself.</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/1.svg" /></p>
+<p>If such element has no payload, then it is a guard element and
+represents an empty list. If the element has some payload associated
+with it, then it is a free node that yet has not been connected to the
+list. Everything forms a closed loop.</p>
+<p>The structure for the circular linked list is really simple. It only
+requires two pointers. One pointing to the next element
+(<code>next</code>) and another pointing the previous element
+(<code>prev</code>).</p>
+<div class="sourceCode" id="cb1"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> item <span class="op">{</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> item <span class="op">*</span>prev<span class="op">,</span> <span class="op">*</span>next<span class="op">;</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<h2 id="storing-payload">Storing payload</h2>
+<p>How do you store payload with such list? Well you can directly embed
+it in the <code>struct item</code> like this:</p>
+<div class="sourceCode" id="cb2"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> a <span class="op">{</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> a<span class="op">,</span> b<span class="op">,</span> c<span class="op">;</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> item <span class="op">{</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> item <span class="op">*</span>prev<span class="op">,</span> <span class="op">*</span>next<span class="op">;</span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> a payload<span class="op">;</span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<p>Unfortunately, this way your list can only hold one type of payload
+(in this case <code>struct a</code>). You can make it more generic by
+using a macro and define many types of lists for different types of
+payload.</p>
+<div class="sourceCode" id="cb3"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define LIST_ITEM_FOR</span><span class="op">(</span><span class="pp">a</span><span class="op">)</span><span class="pp"> </span><span class="op">\</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="pp">    </span><span class="kw">struct</span><span class="pp"> item_</span><span class="op">##</span><span class="pp">a </span><span class="op">{</span><span class="pp"> </span><span class="op">\</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a><span class="pp">        </span><span class="kw">struct</span><span class="pp"> item_</span><span class="op">##</span><span class="pp">a </span><span class="op">*</span><span class="pp">prev</span><span class="op">,</span><span class="pp"> </span><span class="op">*</span><span class="pp">next</span><span class="op">;</span><span class="pp"> </span><span class="op">\</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a><span class="pp">        a payload</span><span class="op">;</span><span class="pp"> </span><span class="op">\</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="pp">    </span><span class="op">}</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>LIST_ITEM_FOR<span class="op">(</span><span class="dt">int</span><span class="op">);</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>LIST_ITEM_FOR<span class="op">(</span><span class="kw">struct</span> a<span class="op">);</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>LIST_ITEM_FOR<span class="op">(</span><span class="kw">struct</span> b<span class="op">);</span></span></code></pre></div>
+<p>But then every type of such list will need a separate set of
+functions dedicated for this specific type, which you will also need to
+define through a macro. And usually more macros equal more trouble.</p>
+<p>We can do this the other way around. We can embed a
+<code>struct item</code> <strong>into the payload structure</strong>.
+Yes. This way we can implement all list operations for a single
+<code>struct item</code> type. If we want to access the payload, we can
+do so with the help of a very cool <code>container_of()</code> macro,
+invented a long time ago by Linux kernel developers.</p>
+<div class="sourceCode" id="cb4"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="pp">#define container_of</span><span class="op">(</span><span class="pp">ptr</span><span class="op">,</span><span class="pp"> type</span><span class="op">,</span><span class="pp"> member</span><span class="op">)</span><span class="pp"> </span><span class="op">\</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="pp">    </span><span class="op">((</span><span class="pp">type </span><span class="op">*)((</span><span class="dt">char</span><span class="pp"> </span><span class="op">*)(</span><span class="pp">ptr</span><span class="op">)</span><span class="pp"> </span><span class="op">-</span><span class="pp"> offsetof</span><span class="op">(</span><span class="pp">type</span><span class="op">,</span><span class="pp"> member</span><span class="op">)))</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a><span class="co">// Or a more type safe version, which will not compile if &quot;member&quot; is</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a><span class="co">// of a different type than &quot;ptr&quot;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a><span class="pp">#define container_of</span><span class="op">(</span><span class="pp">ptr</span><span class="op">,</span><span class="pp"> type</span><span class="op">,</span><span class="pp"> member</span><span class="op">)</span><span class="pp"> </span><span class="op">\</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a><span class="pp">    </span><span class="op">((</span><span class="pp">type </span><span class="op">*)((</span><span class="dt">char</span><span class="pp"> </span><span class="op">*)(</span><span class="dv">1</span><span class="pp"> </span><span class="op">?</span><span class="pp"> </span><span class="op">(</span><span class="pp">ptr</span><span class="op">)</span><span class="pp"> </span><span class="op">:</span><span class="pp"> </span><span class="op">&amp;((</span><span class="pp">type </span><span class="op">*)</span><span class="dv">0</span><span class="op">)-&gt;</span><span class="pp">member</span><span class="op">)</span><span class="pp"> </span><span class="op">-</span><span class="pp"> offsetof</span><span class="op">(</span><span class="pp">type</span><span class="op">,</span><span class="pp"> member</span><span class="op">)))</span></span></code></pre></div>
+<p>It allows you to get a pointer to the structure that
+<code>struct item</code> is embedded into, by using a pointer to
+<code>struct item</code>.</p>
+<div class="sourceCode" id="cb5"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> item <span class="op">{</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> item <span class="op">*</span>prev<span class="op">,</span> <span class="op">*</span>next<span class="op">;</span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> a <span class="op">{</span></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="kw">struct</span> item node<span class="op">;</span></span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="dt">int</span> a<span class="op">,</span> b<span class="op">,</span> c<span class="op">;</span></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a><span class="op">};</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> a a<span class="op">;</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> item <span class="op">*</span>p <span class="op">=</span> <span class="op">&amp;</span>a<span class="op">.</span>node<span class="op">;</span></span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a><span class="co">// If you have a pointer to &#39;struct item&#39;, you can get &#39;struct a&#39;, in which</span></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co">// it is embedded</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> a <span class="op">*</span>pa <span class="op">=</span> container_of<span class="op">(&amp;</span>p<span class="op">,</span> <span class="kw">struct</span> a<span class="op">,</span> node<span class="op">);</span></span></code></pre></div>
+<p>Ok. Let’s implement the basic operations for this list.</p>
+<h2 id="linking-two-elements-together">Linking two elements
+together</h2>
+<p>Let’s say we have a bunch of list nodes. To make a list we need to be
+able to link them together. We need a function that will do this. We
+will call it <code>list_link()</code>, because its purpose is to link
+two nodes together.</p>
+<p>So given any two nodes, we want to link them so that one is placed
+before another.</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/3.svg" /></p>
+<p>Here is the code for such function. Its just two lines.</p>
+<div class="sourceCode" id="cb7"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> list_link<span class="op">(</span><span class="kw">struct</span> item <span class="op">*</span>prev<span class="op">,</span> <span class="kw">struct</span> item <span class="op">*</span>next<span class="op">)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>    prev<span class="op">-&gt;</span>next <span class="op">=</span> next<span class="op">;</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>    next<span class="op">-&gt;</span>prev <span class="op">=</span> prev<span class="op">;</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>That was easy and we’ve just got an element initializer for our list
+nodes for free. To initalize a node we can link it with itself.</p>
+<div class="sourceCode" id="cb8"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">struct</span> item a<span class="op">;</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>list_link<span class="op">(&amp;</span>a<span class="op">,</span> <span class="op">&amp;</span>a<span class="op">);</span> <span class="co">// Link an item with itself to initalize it</span></span></code></pre></div>
+<p>This is how the node <code>a</code> looks like before and after it is
+initalized.</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/6.svg" /></p>
+<p>Ready for the next operation? It is even cooler.</p>
+<h2 id="splitting-the-list-into-two-lists">Splitting the list into two
+lists</h2>
+<p>Now let’s write the second operation, whose purpose will bo to split
+any circular list into two circular sublists by connecting two nodes.
+Let’s call this operation <code>list_split()</code></p>
+<p>So for any given list:</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/4.svg" /></p>
+<p>If we do <code>list_split()</code> at node <code>a</code> and
+<code>b</code> we get this.</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/5.svg" /></p>
+<p>The code for <code>list_split()</code> looks like that:</p>
+<div class="sourceCode" id="cb9"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> list_split<span class="op">(</span><span class="kw">struct</span> item <span class="op">*</span>a<span class="op">,</span> <span class="kw">struct</span> item <span class="op">*</span>b<span class="op">)</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>    list_link<span class="op">(</span>b<span class="op">-&gt;</span>prev<span class="op">,</span> a<span class="op">-&gt;</span>next<span class="op">);</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>    list_link<span class="op">(</span>a<span class="op">,</span> b<span class="op">);</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>What is so cool about it? These are all operations you will mostly
+need. The rest are just wrappers.</p>
+<h2 id="joining-two-lists-together">Joining two lists together</h2>
+<p>Here we have a kind of a reverse situation</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/5.svg" /></p>
+<p>What is so cool about the <code>list_split()</code> is that if we
+call it on <code>a</code> and <code>c</code>, we will join the two list
+back together! Yes!</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/4.svg" /></p>
+<p>So we can create a wrapper for this:</p>
+<div class="sourceCode" id="cb10"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> list_join<span class="op">(</span><span class="kw">struct</span> item <span class="op">*</span>a<span class="op">,</span> <span class="kw">struct</span> item <span class="op">*</span>b<span class="op">)</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    list_split<span class="op">(</span>a<span class="op">,</span> b<span class="op">);</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="adding-an-element-to-the-list">Adding an element to the
+list</h2>
+<p>Adding an element to the list is also easy. A single initialized
+element of the list is also a circular linked list. So the operation is
+exactly the same as <code>list_join()</code></p>
+<div class="sourceCode" id="cb11"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> list_add<span class="op">(</span><span class="kw">struct</span> item <span class="op">*</span>list<span class="op">,</span> <span class="kw">struct</span> item <span class="op">*</span>element<span class="op">)</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    list_split<span class="op">(</span>list<span class="op">,</span> element<span class="op">);</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>If we want to add an element before (at the end), we can just reverse
+the arguments.</p>
+<div class="sourceCode" id="cb12"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> list_add_before<span class="op">(</span><span class="kw">struct</span> item <span class="op">*</span>list<span class="op">,</span> <span class="kw">struct</span> item <span class="op">*</span>element<span class="op">)</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>    list_split<span class="op">(</span>element<span class="op">,</span> list<span class="op">);</span></span>
+<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<h2 id="removing-an-element-from-the-list">Removing an element from the
+list</h2>
+<p>This is also cool.</p>
+<div class="sourceCode" id="cb13"><pre class="sourceCode c"><code class="sourceCode c"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="dt">void</span> list_remove<span class="op">(</span><span class="kw">struct</span> item <span class="op">*</span>item<span class="op">)</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="op">{</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    list_split<span class="op">(</span>item<span class="op">,</span> item<span class="op">);</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="op">}</span></span></code></pre></div>
+<p>Calling <code>list_remove(&amp;a)</code> on the following list:</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/4.svg" /></p>
+<p>Will remove element <code>a</code> from the list.</p>
+<p><img src="/assets/circular-list-in-a-few-lines-of-code/7.svg" /></p>
+<h2 id="summary">Summary</h2>
+<p>With just two operations <code>list_link()</code> and
+<code>list_split()</code>, you can quickly implement a circular double
+linked list with basic functionality.</p>
+<p>This is a pretty basic implementation, but for many cases it can be
+enough. For more robust and field proven examples of circular linked
+lists take a look at <a
+href="https://github.com/torvalds/linux/blob/master/include/linux/list.h">linux/list.h</a>
+or <a
+href="https://github.com/git/git/blob/master/list.h">git/list.h</a>.</p></div>
+
+        <div class="navigation">
+            <div>
+                <div class="prev-post">
+                <div>Next post</div>
+<a href=/2021/03/09/alternative-approach-to-option-parsing.html>Alternative approach to option parsing</a>
+                </div>
+                <div class="next-post">
+                <div>Previous post</div>
+<a href=/2020/03/21/subcommands-in-bash-scripts.html>Subcommands in Bash scripts</a>
+                </div>
+                <div class="cf"></div>
+            </div>
+
+            <div class="all-posts-link">
+                <a href="/">[see all posts]</a>
+            </div>
+        </div>
+        </div>
+    </div>
+        <a class="u-url" href="//2020/10/25/circular-list-in-a-few-lines-of-code.html" hidden></a>
+    </article>
+            </main>
+
+            <footer>
+                <div class="copyright">
+                    <a href="/uncopyright/" class="about-link">uncopyright</a>
+                </div>
+            </footer>
+        </div>
+
+      </body>
+
+    </html>
