@@ -63,14 +63,7 @@ render_post () {
             </h1>
 
             <div class="post-meta">
-                <span>$(echo ${post[date]} | format_date)</span>
-                <span class="post-tags">
-                $(
-                    for tag in ${post[tags]}; do
-                        echo "<a class="post-tag" href="#">$tag</a>"
-                    done
-                )
-                </span>
+                <span>$(echo ${post[date]} | format_date) by <a href="/">${post[author]}</a></span>
             </div>
 
             </header>
@@ -125,7 +118,7 @@ with_layout_default () {
         <meta charset="utf-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <meta name="viewport" content="width=device-width, initial-scale=1">
-        <meta name="theme-color" content="#0276f6">
+        <meta name="theme-color" content="#f7f7f7">
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 
         $(
@@ -140,8 +133,8 @@ with_layout_default () {
         <meta property="og:title" content="${PAGE[title]:-${BLOG_TITLE}}" />
         <meta property="og:locale" content="en_US" />
 
-        <meta name="description" content="${page[description]:-A public domain blog about Bash}" />
-        <meta property="og:description" content="${page[description]:-A public domain blog about Bash}" />
+        <meta name="description" content="${page[description]:-${BLOG_LONG_DESCRIPTION}}" />
+        <meta property="og:description" content="${page[description]:-${BLOG_LONG_DESCRIPTION}}" />
 
         <link rel="canonical" href="${PAGE[absolute_url]}" />
         <meta property="og:url" content="${PAGE[absolute_url]}" />
@@ -161,7 +154,7 @@ with_layout_default () {
 
             <footer>
                 <div class="copyright">
-                    <a href="/uncopyright/" class="about-link">uncopyright</a>
+                    <a href="/" class="about-link">© Przemysław Czarnota</a>
                 </div>
             </footer>
         </div>
@@ -259,11 +252,15 @@ paginate () {
     fi
 }
 
+render_header () {
+    echo "<h1 class="all-posts-h"><a href="/">${BLOG_TITLE}</a></h1>"
+}
+
 render_archives () {
     with_layout_default <<____EOF
         <div class="wrapper">
-            <h1 class="all-posts-h">${BLOG_TITLE}</h1>
-            <span class="all-posts-about">${BLOG_DESCRIPTION}</span>
+            $(render_header)
+            <h2 class="all-posts-about">Posts</h2>
             <ul class="all-posts">
                 $(
                     for i in ${page_numbers[@]}; do
@@ -279,22 +276,13 @@ ____EOF
 render_about () {
     with_layout_default <<____EOF
         <div class="about wrapper">
-        <h1 class="all-posts-h">${BLOG_TITLE}</h1>
-        <span class="all-posts-about">
-        ${BLOG_DESCRIPTION}
-        </span>
+        $(render_header)
+        <h2 class="all-posts-about">
+        About
+        </h2>
 
         <p>
-        This blog is Uncopyrighted. Its authors, have released all claims on copyright and has put all the content of this blog into the public domain.
-
-        No permission is needed to copy, distribute, or modify the content of this site. Credit is appreciated but not required.
-        </p>
-
-        <h4>Terms and Conditions for Copying, Distribution and Modification</h4>
-
-        <ul>
-        <li>0. Do whatever the hell you like.</li>
-        </ul>
+        Hi, My name is Przemysław Czarnota. I am a software engineer based in Szczecin, Poland.
         </p>
 ____EOF
 }
@@ -394,15 +382,16 @@ main () {
         render_archives | save_as "$BLOG_BUILD_DIR/index.html"
     )
 
-    (
-        local -A PAGE=(
-            [target]="about/index.html"
-            [url]="/unopyright/"
-            [title]="About"
-            [absolute_url]="$BLOG_HTTP_URL/uncopyright/"
-        )
-        render_about | save_as "$BLOG_BUILD_DIR/uncopyright/index.html"
-    )
+    
+    #(
+    #    local -A PAGE=(
+    #        [target]="about/index.html"
+    #        [url]="/about/"
+    #        [title]="About"
+    #        [absolute_url]="$BLOG_HTTP_URL/about/"
+    #    )
+    #    render_about | save_as "$BLOG_BUILD_DIR/about/index.html"
+    #)
 
     rm -fr $BLOG_BUILD_DIR/assets
     cp -fr assets $BLOG_BUILD_DIR/assets

@@ -2,9 +2,7 @@
 layout: post
 title:  "Alternative approach to option parsing"
 date:   2021-03-09 11:28:00 +0100
-comments: true
-tags:
-  - bash
+author: P. Czarnota
 ---
 
 Some time ago I posted about a declarative approach to the implementation of subcommand parsing in Bash scripts.

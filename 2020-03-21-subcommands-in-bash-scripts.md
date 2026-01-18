@@ -2,9 +2,7 @@
 layout: post
 title:  "Subcommands in Bash scripts"
 date:   2020-03-26 11:26:00 +0100
-comments: true
-tags:
-  - bash
+author: P. Czarnota
 ---
 
 When your bash scripts start doing many things, then it may be a good idea to

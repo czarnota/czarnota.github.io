@@ -2,9 +2,7 @@
 layout: post
 title:  "Circular doubly linked list in just a few lines of code"
 date:   2020-10-25 11:26:00 +0100
-comments: true
-tags:
-  - c
+author: P. Czarnota
 ---
 
 Single linked lists are simple, doubly linked lists are harder,

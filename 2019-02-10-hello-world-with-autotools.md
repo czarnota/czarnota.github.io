@@ -2,11 +2,7 @@
 layout: post
 title:  "Hello world with Autotools"
 date:   2019-02-10 13:01:16 +0100
-image: /assets/hello-world-with-autotools.jpg
-comments: true
-image_pos: center center
-tags:
-  - c
+author: P. Czarnota
 ---
 
 *[The Autotools](https://en.wikipedia.org/wiki/GNU_Build_System)*
